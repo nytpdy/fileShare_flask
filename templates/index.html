@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>文件共享</title>
+    <link rel="Shortcut Icon" href="/static/img/logo.ico" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/fileinput.min.js"></script>
+    <link rel="stylesheet" href="/static/css/fileinput.min.css">
+    <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon">
+    <script src="/static/js/zh.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            width: 1000px;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container">
+  <h2>在同一局域网下输入{{ip}}:5000即可访问,当前账户:{{ username }} <a href='{{ url_for('logout')}}'>登出</a></h2>
+  <br>
+  <div class="list-group">
+      {% for n,d in data.items() %}
+    <p><a href="{{ url_for('download',filename=n)}}" class="list-group-item list-group-item-secondary">
+        {{ n }}</a>用户名:{{d['userName']}}，上传时间:{{d['dateTime']}}，文件大小{{d['size']}}
+        <a  id="del" href="{{ url_for('delete',filename=n,username=d['userName'])}}">删除</a>
+    </p>
+      {% endfor %}
+  </div>
+  <br>
+<div class="upload-wrap">
+    <input id="upload" type="file" multiple="multiple" name="files" />
+</div>
+
+<script type="text/javascript">
+    let flag = true
+    let del = document.getElementById("del")
+    del.onclick = function check(){
+    // console.log("deleteing......");
+    // console.log(uesrname,fileName);
+    // if uesrname != fileName
+    // alert('你当前没有操作权限');
+
+        //confirm方法弹出一个对话框,可以选择确定与取消操作
+        //同时该方法有返回值,true和false,两个布尔值
+        var flag = confirm("确定删除吗?");
+        if(flag){
+            alert("你点击了确定");
+            return true;
+            //进行后台处理,路径跳转
+            // window.location.href="";
+            // location.reload();
+        }else{
+            alert("你点击了取消");
+            return false;
+        }
+    }
+</script>
+
+
+    <script>
+        $("#upload").fileinput({
+            language: 'zh',                                            // 设置语言
+            uploadUrl: "{{url_for('upload')}}",    // 上传地址
+            {#allowedFileExtensions: ['jpg', 'bmp', 'png'],              // 接收的文件后缀#}
+            uploadAsync: true,                                         // 默认异步上传
+            showUpload: true,                                          // 显示上传按钮
+            showRemove: true,                                          // 显示移除按钮
+            showPreview: true,                                         // 显示预览
+            showCaption: true,                                        // 显示标题
+            browseClass: "btn btn-primary",                            // 按钮样式
+            dropZoneEnabled: true,                                     // 显示拖拽区域
+            maxFileCount: 30,                                           // 允许同时上传的最大文件个数
+            enctype: 'multipart/form-data',
+            validateInitialCount: true,
+            previewFileIcon: "",
+            msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+
+        }).on("fileuploaded", function (event, data, previewId, index) {
+            window.alert('文件上传成功');
+            location.reload();
+        });
+    </script>
+</div>
+</body>
+</html>

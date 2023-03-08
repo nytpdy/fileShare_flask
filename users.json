@@ -1,0 +1,1 @@
+{"users": [{"id": "Tom", "username": "Tom", "password": "111111", "permissions": 0}, {"id": "admin", "username": "admin", "password": "123456", "permissions": 1}, {"id": "test", "username": "test", "password": "test", "permissions": 0}, {"id": "123456", "username": "123456", "password": "abcd1234", "permissions": 0}]}
