@@ -31,7 +31,8 @@ def add_user(id, username, password):
     dic = {
         'id': id,
         'username': username,
-        'password': password
+        'password': password,
+        'permissions': 0
     }
     users['users'].append(dic)
 

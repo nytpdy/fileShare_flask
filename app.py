@@ -13,8 +13,9 @@ from flask import Flask, render_template, send_from_directory, request
 from flask_cors import CORS  # 跨域
 from flask_login import LoginManager, login_user, logout_user, login_required
 from gevent import pywsgi
+from emailDo import *
 
-from models import User, query_user
+from models import User, query_user, add_user, doit
 from pds import deletefile, writefile, collection
 
 storage_path = str(os.getcwd()) + '\storage'
@@ -183,6 +184,7 @@ def login():
             data = {
                 'username': user['username'],
                 'userid': user['id'],
+                'permissions': user['permissions'],
                 'fileMax': get_free_space_mb(storage_path),
                 'filesize': getFileSize(storage_path)
             }
@@ -426,6 +428,35 @@ def upload():
 @app.route('/uploads/<path:filename>')
 def get_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
+@app.route('/setmail', methods=['POST'])
+def setmail():
+    data = request.get_json()
+    # print(data)
+    if data == {}:
+        return "error"
+    address = data['address']
+    creatVercode()
+    mail(address)
+    return 'yes'
+
+
+@app.route('/confirmCreation', methods=['POST'])
+def confirmCreation():
+    data = request.get_json()
+    ver_code = get_ver()
+    print(ver_code)
+    print(data['ver'])
+    if str(ver_code) == str(data['ver']):
+        print("yes")
+        name = data['name']
+        psd = data['password']
+        newemail = data['email']
+        add_user(newemail, name, psd)
+        doit()
+        return json.dumps({'code': '200'}), 200, {"Content-Type": "application/json"}
+    return json.dumps({'code': 400}), 400, {"Content-Type": "application/json"}
 
 
 @app.route('/test')
